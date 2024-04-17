@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .sensor-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sensor {
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            margin: 10px;
+            flex: 1 0 200px;
+            max-width: 25%;
+        }
+
+        .sensor ion-icon {
+            max-width: 100px;
+            max-height: 100px;
+            font-size: 64px;
+        }
+
+        .counter {
+            font-size: 27px;
+        }
+
+        @media (max-width: 600px) {
+            .sensor {
+                flex: 1 0 45%;
+                max-width: 31%;
+            }
+        }
+
+        /* ========= GRAFICO =============*/
+        .content {
+            padding: 5%;
+        }
+
+        .card-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-gap: 2rem;
+        }
+
+        .card {
+            background-color: white;
+            box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, .5);
+        }
+
+        .chart-container {
+            padding-right: 5%;
+            padding-left: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Sensor Dashboard</h1>
+    </header>
+
+    <main>
+        <div class="sensor-container">
+            <div class="sensor">
+                <h2>Sensor 1 DS18B20</h2>
+                <ion-icon name="thermometer-outline"></ion-icon>
+                <p>Temperature:</p>
+                <p class="counter"><span id="ds18b20-1">...</span> °C</p>
+            </div>
+
+            <div class="sensor">
+                <h2>Sensor 2 DS18B20</h2>
+                <ion-icon name="thermometer-outline"></ion-icon>
+                <p>Temperature:</p>
+                <p class="counter"><span id="ds18b20-2">...</span> °C</p>
+            </div>
+
+            <div class="sensor">
+                <h2>Sensor 3 DS18B20</h2>
+                <ion-icon name="thermometer-outline"></ion-icon>
+                <p>Temperature:</p>
+                <p class="counter"><span id="ds18b20-3">...</span> °C</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="card-grid">
+                <div class="card">
+                    <div id="chart-temperature" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script src="highcharts.js"></script>
+<script>
+    var chartT = new Highcharts.Chart({
+        chart: {
+            renderTo: 'chart-temperature'
+        },
+        series: [
+            {
+                name: 'Sensor 1 DS18B20',
+                type: 'line',
+                color: '#101D42',
+                marker: {
+                    symbol: 'circle',
+                    radius: 3,
+                    fillColor: '#101D42',
+                }
+            },
+            {
+                name: 'Sensor 2 DS18B20',
+                type: 'line',
+                color: '#71B48D',
+                marker: {
+                    symbol: 'triangle-down',
+                    radius: 3,
+                    fillColor: '#71B48D',
+                }
+            },
+            {
+                name: 'Sensor 3 DS18B20',
+                type: 'line',
+                color: '#FF5733',
+                marker: {
+                    symbol: 'triangle-up',
+                    radius: 3,
+                    fillColor: '#FF5733',
+                }
+            },
+        ],
+        title: {
+            text: 'Sensor Data Graph'
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { second: '%H:%M:%S' }
+        },
+        yAxis: [
+            {
+                lineWidth: 1,
+                title: {
+                    text: 'Temperature Celsius'
+                }
+            }
+        ],
+        credits: {
+            enabled: false
+        }
+    });
+
+    function plotTemperature(jsonObj) {
+        let x = (new Date()).getTime();
+        const minutos = 1000 * 60;
+        let epch = new Date;
+        x = (epch.getTime()) - (epch.getTimezoneOffset()) * minutos;
+
+        if (chartT.series[0].data.length > 40) {
+            chartT.series[0].addPoint([x, jsonObj.temperature1], true, true, true);
+            chartT.series[1].addPoint([x, jsonObj.temperature2], true, true, true);
+            chartT.series[2].addPoint([x, jsonObj.temperature3], true, true, true);
+        } else {
+            chartT.series[0].addPoint([x, jsonObj.temperature1], true, false, true);
+            chartT.series[1].addPoint([x, jsonObj.temperature2], true, false, true);
+            chartT.series[2].addPoint([x, jsonObj.temperature3], true, false, true);
+        }
+    }
+
+    function updateSensors() {
+        fetch('/sensors')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ds18b20-1').textContent = data.temperature1;
+                document.getElementById('ds18b20-2').textContent = data.temperature2;
+                document.getElementById('ds18b20-3').textContent = data.temperature3;
+                plotTemperature(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    setInterval(updateSensors, 2000);
+</script>
+
+</html>
