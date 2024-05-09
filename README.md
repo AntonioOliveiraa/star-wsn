@@ -36,7 +36,7 @@ The project consists of a master node and three slave nodes. The slave nodes col
 
 The dashboard is hosted locally by a web server and displays the collected data in graphs, using the Highcharts.js library in offline mode.
 
-### Date Folder
+### Data Folder
 
 Contains the HTML and highcharts.js files for data visualization. The files must be loaded into the microcontroller's flash memory to be used.
 
