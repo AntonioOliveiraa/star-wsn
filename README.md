@@ -52,7 +52,7 @@ Please read [CONTRIBUTING.md](https://github.com/AntonioOliveiraa/star-wsn/blob/
 
 * **Antônio Oliveira** - *Main Developer* - [AntonioOliveiraa](https://github.com/AntonioOliveiraa)
 * **Gustavo Marques** - *Developer* - [GMFK00](https://github.com/gmfk00)
-* **José Muniz** - *Developer* - [joseribacermuniz](https://github.com/joseribacermuniz)
+* **José Muniz** - *Developer* - [ribamarmuniz](https://github.com/ribamarmuniz)
 * **Paulo Fernandes** - *Analyst* - [pfs1224](https://github.com/pfs1224)
 
 See also the list of [collaborators](https://github.com/AntonioOliveiraa/star-wsn/graphs/contributors) who participated in this project.
